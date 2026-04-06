@@ -16,7 +16,7 @@ const io = socketIo(server)
 const users = new Set()
 
 app.use(express.json())
-app.use(express.static("public"))
+app.use(express.static("./"))
 app.use('/api/connect', userroutes)
 
 connectToDB()
