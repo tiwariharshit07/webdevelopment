@@ -4,6 +4,7 @@ dns.setServers(["1.1.1.1"])
 const http = require('http')
 const express = require('express')
 const socketIo = require('socket.io')
+const cors = require('cors') 
 require('dotenv').config()
 
 const { connectToDB } = require('./database/db')
@@ -11,12 +12,21 @@ const userroutes = require('./routes/user-routes')
 
 const app = express()
 const server = http.createServer(app)
-const io = socketIo(server)
+
+const io = socketIo(server, {
+    cors: {
+        origin: "https://tiwariharshit07.github.io",
+        methods: ["GET", "POST"]
+    }
+})
 
 const users = new Set()
 
 app.use(express.json())
-app.use(express.static("./"))
+app.use(cors({
+    origin: "https://tiwariharshit07.github.io"
+}))
+
 app.use('/api/connect', userroutes)
 
 connectToDB()

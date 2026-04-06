@@ -255,7 +255,8 @@
     </div>
   </div>
 
-  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
   <script>
     const authContainer = document.getElementById("authContainer");
     const chatContainer = document.getElementById("chatContainer");
@@ -270,8 +271,8 @@
       document.getElementById("registerForm").style.display = "flex";
     });
 
-    // Socket
-    const socket = io();
+    // FIX: socket declared here but NOT connected yet
+    let socket;
     const chatBox = document.getElementById('chat-box');
     const usersList = document.getElementById('users');
     const messageInput = document.getElementById('message');
@@ -284,7 +285,7 @@
       const email = document.getElementById("email").value
       const password = document.getElementById("password").value
       const role = document.getElementById("role").value
-      const res = await fetch("http://localhost:3000/api/connect/register", {
+      const res = await fetch("https://webdevelopment-movx.onrender.com/api/connect/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, email, password, role })
@@ -297,19 +298,23 @@
     async function loginUser() {
       const username = document.getElementById("loginUsername").value
       const password = document.getElementById("loginPassword").value
-      const res = await fetch("http://localhost:3000/api/connect/login", {
+      const res = await fetch("https://webdevelopment-movx.onrender.com/api/connect/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password })
       });
+
       const data = await res.json();
 
       if (data.success) {
         currentUsername = username;
+
+        // FIX: connect socket only after successful login
+        socket = io("https://webdevelopment-movx.onrender.com");
+        setupSocketListeners();
+
         authContainer.style.display = "none";
-
         chatContainer.style.display = "flex";
-
         chatHeader.innerText = currentUsername;
         socket.emit('join', currentUsername);
       } else {
@@ -317,31 +322,23 @@
       }
     }
 
-    // informing user has joined
-    socket.on('joined', user => addMessage(`${user} has joined the chat`, "received"));
-    //informing user has left
-    socket.on('userLeft', user => addMessage(`${user} has left the chat`, "received"));
-    // setting total users in online section
-    socket.on('userlist', users => usersList.innerHTML = users.map(name => `<li>${name}</li>`).join(''));
-    // socket.on('chatMessage', msg => addMessage(`${msg.Username}: ${msg.text}`, "received"));
-    socket.on('chatMessage', message => {
+    // FIX: all socket listeners moved into this function
+    function setupSocketListeners() {
+      socket.on('joined', user => addMessage(`${user} has joined the chat`, "received"));
+      socket.on('userLeft', user => addMessage(`${user} has left the chat`, "received"));
+      socket.on('userlist', users => usersList.innerHTML = users.map(name => `<li>${name}</li>`).join(''));
+      socket.on('chatMessage', message => {
+        const Me = message.Username === currentUsername;
+        const type = Me ? "sent" : "received";
+        const name = Me ? "You" : message.Username;
+        addMessage(`${name}: ${message.text}`, type);
+      });
+    }
 
-      const Me = message.Username === currentUsername;
-
-      const type = Me ? "sent" : "received";
-      const name = Me ? "You" : message.Username;
-
-      addMessage(`${name}: ${message.text}`, type);
-
-    });
-    // 
     document.getElementById('submit').addEventListener('click', event => {
       event.preventDefault();
-
-      // now get the message
       const extracttext = messageInput.value.trim();
       if (extracttext) {
-        // addMessage(`You: ${text}`, "sent");
         socket.emit('chatMessage', {
           Username: currentUsername,
           text: extracttext
