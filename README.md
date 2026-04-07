@@ -9,18 +9,21 @@ A full-stack real-time chat application with user authentication, live messaging
 ### 🔐 Login Page
 > Existing users can sign in with their username and password.
 
+![Login Page](login.png)
 
-
-
+---
 
 ### 📝 Register Page
 > New users can create an account by providing a username, email, password, and selecting a role (User/Admin).
 
+![Register Page](register.png)
 
+---
 
 ### 💬 Chat Interface
 > Once logged in, users can see who's online and send real-time messages in the chat room.
 
+![Chat Interface](chat.png)
 
 ---
 
@@ -39,10 +42,13 @@ A full-stack real-time chat application with user authentication, live messaging
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | HTML / CSS / JavaScript (or React) |
+| Frontend | HTML / CSS / JavaScript |
 | Backend | Node.js / Express |
 | Real-Time | Socket.IO |
-| Database | MongoDB
+| Database | MongoDB |
+
+
+---
 
 ## 🚀 Getting Started
 
@@ -50,16 +56,16 @@ A full-stack real-time chat application with user authentication, live messaging
 
 - Node.js (v16+)
 - npm or yarn
-- MongoDB / PostgreSQL (depending on your setup)
+- MongoDB
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/your-repo-name.git
+git clone https://github.com/tiwariharshit07/webdevelopment.git
 
 # Navigate into the project directory
-cd your-repo-name
+cd webdevelopment
 
 # Install dependencies
 npm install
@@ -75,22 +81,22 @@ npm run dev
 npm start
 ```
 
-Then open your browser and go to: `http://localhost:3000`
 
----
+
 
 ## 📁 Project Structure
 
 ```
-├── client/               # Frontend code
-│   ├── index.html        # Login / Register page
-│   ├── chat.html         # Chat interface
-│   └── styles.css        # Styling
-├── server/               # Backend code
-│   ├── index.js          # Entry point
-│   ├── routes/           # Auth routes
-│   └── models/           # Database models
-├── .env.example          # Environment variable template
+├── controllers/          # Business logic
+├── database/
+│   └── db.js             # MongoDB connection
+├── models/
+│   └── user.js           # User schema
+├── routes/               # API routes
+├── .env                  # Environment variables
+├── .gitignore
+├── index.html            # Frontend
+├── server.js             # Main entry point
 ├── package.json
 └── README.md
 ```
@@ -99,7 +105,7 @@ Then open your browser and go to: `http://localhost:3000`
 
 ## 🔧 Environment Variables
 
-Create a `.env` file in the root directory based on `.env.example`:
+Create a `.env` file in the root directory:
 
 ```env
 PORT=3000
